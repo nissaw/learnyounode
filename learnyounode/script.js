@@ -37,3 +37,31 @@ console.log(getNewLines());*/
 //   return lines;
 // });
 
+// LESSON 5
+// var fs = require('fs');
+// var path = require('path');
+
+// var dir = process.argv[2];
+// var type = '.'+process.argv[3];
+
+// fs.readdir(dir, function(err, list){
+//   var filtered = list.filter(function(file){ 
+//     return path.extname(file) === type; 
+//   })
+  // console.log(filtered.join("\n"));
+  // return filtered.join("\n"); 
+// });
+
+//LESSON 6
+var mod = require('./mod.js');
+
+// the list passed here has already been filtered for ext
+mod(process.argv[2], process.argv[3], function(err, list){
+  if (err){
+    console.log('There was an error: ', err);
+    return err;
+  } 
+  list.forEach(function(file){
+    console.log(file);
+  });
+});  
