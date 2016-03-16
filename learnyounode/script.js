@@ -111,45 +111,45 @@ http.get(process.argv[2], function (response) {
 })  */
 
 //LESSON 9
-var http = require('http');
+// var http = require('http');
 
 
-// req 1
-http.get(process.argv[2], function(res){
-  var str = '';
-  res.on('error', console.error);
-  res.setEncoding('utf8');
-  res.on('data', function(data){
-    str+=data;
-  });
-  res.on('end', function(){
-    console.log(str);
-    // req 2
-    http.get(process.argv[3], function(res){
-      var str = '';
-      res.on('error', console.error);
-      res.setEncoding('utf8');
-      res.on('data', function(data){
-        str+=data;
-      });
-      res.on('end', function(){
-        console.log(str);
-        // req 3
-        http.get(process.argv[4], function(res){
-          var str = '';
-          res.on('error', console.error);
-          res.setEncoding('utf8');
-          res.on('data', function(data){
-            str+=data;
-          });
-          res.on('end', function(){
-              console.log(str);
-          });
-        });
-      });
-    });
-  });
-});
+// // req 1
+// http.get(process.argv[2], function(res){
+//   var str = '';
+//   res.on('error', console.error);
+//   res.setEncoding('utf8');
+//   res.on('data', function(data){
+//     str+=data;
+//   });
+//   res.on('end', function(){
+//     console.log(str);
+//     // req 2
+//     http.get(process.argv[3], function(res){
+//       var str = '';
+//       res.on('error', console.error);
+//       res.setEncoding('utf8');
+//       res.on('data', function(data){
+//         str+=data;
+//       });
+//       res.on('end', function(){
+//         console.log(str);
+//         // req 3
+//         http.get(process.argv[4], function(res){
+//           var str = '';
+//           res.on('error', console.error);
+//           res.setEncoding('utf8');
+//           res.on('data', function(data){
+//             str+=data;
+//           });
+//           res.on('end', function(){
+//               console.log(str);
+//           });
+//         });
+//       });
+//     });
+//   });
+// });
 
 
 // optimizting
@@ -166,8 +166,8 @@ http.get(process.argv[2], function(res){
 //       console.log(str);
           // index++;
           // if (index < 3){
-          //    httpGet(index + 1);
-          // } 
+          //    httpGet(index + 1          // } );
+
 //   });
 // };
 
@@ -201,4 +201,30 @@ http.get(process.argv[2], function(res){
 // for (var i = 0; i < 3; i++)  
 //   httpGet(i) 
 
+//LESSON 10
+var net = require('net');
 
+var port = Number(process.argv[2]);
+
+var zeroPad = function(val){
+  return (val < 10 ? '0' : '') + val;
+};
+
+// function to create format "2013-07-06 17:42" 
+var setDate = function(){ 
+  var date = new Date();
+  var result = "";
+  return date.getFullYear() + '-' 
+  + zeroPad(date.getMonth()+1) + '-' 
+  + zeroPad(date.getDate()) + ' ' 
+  + zeroPad(date.getHours()) + ':' 
+  + zeroPad(date.getMinutes());
+};
+
+var server = net.createServer(function(socket){
+  console.log('client connected');
+  socket.end(setDate() + '\n');
+  // socket.write(setDate() + '\n');
+  // socket.end();
+});
+server.listen(port);
