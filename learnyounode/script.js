@@ -236,21 +236,42 @@ http.get(process.argv[2], function (response) {
 
 
 // LESSON 11 HTTP FILE SERVER (11/13)
+// const http = require('http');
+// const fs = require('fs');
+
+// let port = Number(process.argv[2]);
+// let filePath = process.argv[3];
+
+// let server = http.createServer((req, res) => {
+//   res.writeHead(200, { 'content-type': 'text/plain' });
+//   var stream = fs.createReadStream(filePath);
+//   stream.pipe(res);
+// });
+
+// server.listen(port);
+
+
+// LESSON 12 HTTP UPPERCASRER
 const http = require('http');
-const fs = require('fs');
+const map = require('through2-map');
 
 let port = Number(process.argv[2]);
-let filePath = process.argv[3];
 
-var server = http.createServer((req, res) => {
-  res.writeHead(200, { 'content-type': 'text/plain' });
-  var stream = fs.createReadStream(filePath);
-  stream.pipe(res);
+let upperCaserer = map(function(chunk) {
+  return chunk.toString().toUpperCase(); 
+});
+
+let server = http.createServer((req, res) => {
+  
+  if (req.method != 'POST') { 
+      return res.end('send me a POST\n') ;
+  }
+  
+  req.pipe(upperCaserer).pipe(res);
+
 });
 
 server.listen(port);
-
-
 
 
 
