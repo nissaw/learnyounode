@@ -1,3 +1,4 @@
+'use strict'
 //LESSON 1
 // console.log('HELLO WORLD');
 
@@ -202,29 +203,82 @@ http.get(process.argv[2], function (response) {
 //   httpGet(i) 
 
 //LESSON 10
-var net = require('net');
+// should attempt refactor using 
+// https://github.com/samsonjs/strftime
 
-var port = Number(process.argv[2]);
+// var net = require('net');
 
-var zeroPad = function(val){
-  return (val < 10 ? '0' : '') + val;
-};
+// var port = Number(process.argv[2]);
 
-// function to create format "2013-07-06 17:42" 
-var setDate = function(){ 
-  var date = new Date();
-  var result = "";
-  return date.getFullYear() + '-' 
-  + zeroPad(date.getMonth()+1) + '-' 
-  + zeroPad(date.getDate()) + ' ' 
-  + zeroPad(date.getHours()) + ':' 
-  + zeroPad(date.getMinutes());
-};
+// var zeroPad = function(val){
+//   return (val < 10 ? '0' : '') + val;
+// };
 
-var server = net.createServer(function(socket){
-  console.log('client connected');
-  socket.end(setDate() + '\n');
-  // socket.write(setDate() + '\n');
-  // socket.end();
+// // function to create format "2013-07-06 17:42" 
+// var setDate = function(){ 
+//   var date = new Date();
+//   var result = "";
+//   return date.getFullYear() + '-' 
+//   + zeroPad(date.getMonth()+1) + '-' 
+//   + zeroPad(date.getDate()) + ' ' 
+//   + zeroPad(date.getHours()) + ':' 
+//   + zeroPad(date.getMinutes());
+// };
+
+// var server = net.createServer(function(socket){
+//   console.log('client connected');
+//   socket.end(setDate() + '\n');
+//   // socket.write(setDate() + '\n');
+//   // socket.end();
+// });
+
+// server.listen(port);
+
+
+// LESSON 11 HTTP FILE SERVER (11/13)
+const http = require('http');
+const fs = require('fs');
+
+let port = Number(process.argv[2]);
+let filePath = process.argv[3];
+
+var server = http.createServer((req, res) => {
+  res.writeHead(200, { 'content-type': 'text/plain' });
+  var stream = fs.createReadStream(filePath);
+  stream.pipe(res);
 });
+
 server.listen(port);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
