@@ -153,55 +153,6 @@ http.get(process.argv[2], function (response) {
 // });
 
 
-// optimizting
-// var index = 0;
-// var httpGet = function(index){
-//   http.get(process.argv[2+index], function(res){
-//     var str = '';
-//     res.on('error', console.error);
-//     res.setEncoding('utf8');
-//     res.on('data', function(data){
-//       str+=data;
-//     });
-//     res.on('end', function(){
-//       console.log(str);
-          // index++;
-          // if (index < 3){
-          //    httpGet(index + 1          // } );
-
-//   });
-// };
-
-
-//OFFICIAL SOLUTION
-// var http = require('http')  
-// var bl = require('bl')  
-// var results = []  
-// var count = 0  
-  
-// function printResults () {  
-//   for (var i = 0; i < 3; i++)  
-//     console.log(results[i])  
-// }  
-  
-// function httpGet (index) {  
-//   http.get(process.argv[2 + index], function (response) {  
-//     response.pipe(bl(function (err, data) {  
-//       if (err)  
-//         return console.error(err)  
-  
-//       results[index] = data.toString()  
-//       count++  
-  
-//       if (count == 3)  
-//         printResults()  
-//     }))  
-//   })  
-// }  
-  
-// for (var i = 0; i < 3; i++)  
-//   httpGet(i) 
-
 //LESSON 10
 // should attempt refactor using 
 // https://github.com/samsonjs/strftime
@@ -252,36 +203,117 @@ http.get(process.argv[2], function (response) {
 
 
 // LESSON 12 HTTP UPPERCASRER
-const http = require('http');
-const map = require('through2-map');
+// const http = require('http');
+// const map = require('through2-map');
 
-let port = Number(process.argv[2]);
+// let port = Number(process.argv[2]);
 
-let upperCaserer = map(function(chunk) {
-  return chunk.toString().toUpperCase(); 
-});
+// let upperCaserer = map(function(chunk) {
+//   return chunk.toString().toUpperCase(); 
+// });
 
-let server = http.createServer((req, res) => {
+// let server = http.createServer((req, res) => {
   
-  if (req.method != 'POST') { 
-      return res.end('send me a POST\n') ;
+//   if (req.method != 'POST') { 
+//       return res.end('send me a POST\n') ;
+//   }
+
+//   req.pipe(upperCaserer).pipe(res);
+
+// });
+
+// server.listen(port);
+
+//LESSON 13 JSON API SERVER
+// var http = require('http');
+// var url = require('url');
+
+
+// var sendJSON = (date) => { 
+//   var json = new Date(date);
+//   return {
+//     hour: json.getHours(),
+//     minute: json.getMinutes(),
+//     second: json.getSeconds()
+//   }
+// };
+
+
+
+// var sendUNIX = (date) => {
+//   var unix = new Date(date).getTime();
+//   return {
+//     unixtime: unix
+//   };
+// };
+
+// var server = http.createServer((req, res) => {
+//   var date = url.parse(req.url).query.split('=')[1];
+//   var pathname = url.parse(req.url).pathname;
+//   console.log(date, pathname);
+//   res.on('data', checkpath)
+
+//   function checkpath(){
+//     if (pathname === '/api/parsetime'){
+//       console.log(sendJSON(date))
+//       res.writeHead(200, { 'Content-Type': 'application/json' });
+//       res.write(JSON.stringify(sendJSON(date)));
+//       res.end();
+//     }
+//     else if (pathname === 'api/unixtime'){
+//       console.log(sendUNIX(date));
+//       res.writeHead(200, { 'Content-Type' : 'application/json' });
+//       res.write(JSON.stringify(sendUNIX(date)));
+//       res.end();
+//     }
+//   };
+
+// });
+
+// server.listen(process.argv[2]);
+
+
+
+
+
+
+
+var http = require('http');
+var url  = require('url');
+
+function isoTime( time ){
+  return {
+    hour : time.getHours(),
+    minute : time.getMinutes(),
+    second : time.getSeconds()
+  };
+}
+
+function unixTime( time ){
+   return { unixtime : time.getTime() } 
+}
+
+var server = http.createServer( function( request, response ){
+  var parseUrl = url.parse( request.url, true );
+  var time = new Date( parseUrl.query.iso );
+  var result;
+
+  if( url.parse( request.url, true ).pathname === '/api/parsetime' ){
+    result = isoTime( time );  
+  } else if( url.parse( request.url, true ).pathname === '/api/unixtime' ){
+    result = unixTime( time );
   }
-  
-  req.pipe(upperCaserer).pipe(res);
 
+  if( result ){
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.end( JSON.stringify( result ) );
+  } else {
+    response.writeHead(404);
+    response.end();
+  }
 });
 
-server.listen(port);
-
-
-
-
-
-
-
-
-
-
+server.listen( process.argv[2] );
 
 
 
